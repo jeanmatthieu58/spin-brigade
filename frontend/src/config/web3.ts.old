@@ -1,0 +1,81 @@
+import { createAppKit } from '@reown/appkit/react'
+import { EthersAdapter } from '@reown/appkit-adapter-ethers'
+
+// Configuration Monad Testnet
+const monadTestnet = {
+  id: 10143,
+  name: 'Monad Testnet',
+  nativeCurrency: {
+    decimals: 18,
+    name: 'Monad',
+    symbol: 'MON',
+  },
+  rpcUrls: {
+    default: { http: ['https://testnet-rpc.monad.xyz'] },
+  },
+  blockExplorers: {
+    default: { 
+      name: 'Monad Explorer', 
+      url: 'https://testnet-explorer.monad.xyz' 
+    },
+  },
+  testnet: true,
+} as const
+
+// TON CONTRAT DÉPLOYÉ
+export const SPIN_BRIGADE_ADDRESS = '0x510e0b6EE3a2b6E2e9647cC4E295e0FD7081854B' as const
+
+// ABI COMPLET du contrat SpinBrigade
+export const SPIN_BRIGADE_ABI = [
+  {"type":"constructor","inputs":[],"stateMutability":"nonpayable"},
+  {"type":"function","name":"COOLDOWN_PERIOD","inputs":[],"outputs":[{"name":"","type":"uint256","internalType":"uint256"}],"stateMutability":"view"},
+  {"type":"function","name":"PREMIUM_SPIN_PRICE","inputs":[],"outputs":[{"name":"","type":"uint256","internalType":"uint256"}],"stateMutability":"view"},
+  {"type":"function","name":"STANDARD_SPIN_PRICE","inputs":[],"outputs":[{"name":"","type":"uint256","internalType":"uint256"}],"stateMutability":"view"},
+  {"type":"function","name":"TOTAL_RECIPES","inputs":[],"outputs":[{"name":"","type":"uint256","internalType":"uint256"}],"stateMutability":"view"},
+  {"type":"function","name":"addFavoriteRecipe","inputs":[{"name":"recipeId","type":"uint256","internalType":"uint256"}],"outputs":[],"stateMutability":"nonpayable"},
+  {"type":"function","name":"dailyFreeSpin","inputs":[],"outputs":[],"stateMutability":"nonpayable"},
+  {"type":"function","name":"favoriteRecipes","inputs":[{"name":"","type":"address","internalType":"address"},{"name":"","type":"uint256","internalType":"uint256"}],"outputs":[{"name":"","type":"uint256","internalType":"uint256"}],"stateMutability":"view"},
+  {"type":"function","name":"getGlobalStats","inputs":[],"outputs":[{"name":"_totalSpins","type":"uint256","internalType":"uint256"},{"name":"_totalRevenue","type":"uint256","internalType":"uint256"},{"name":"_totalUsers","type":"uint256","internalType":"uint256"},{"name":"_spinPrice","type":"uint256","internalType":"uint256"},{"name":"_premiumSpinPrice","type":"uint256","internalType":"uint256"}],"stateMutability":"view"},
+  {"type":"function","name":"getRecipeName","inputs":[{"name":"recipeId","type":"uint256","internalType":"uint256"}],"outputs":[{"name":"","type":"string","internalType":"string"}],"stateMutability":"view"},
+  {"type":"function","name":"getUserSpins","inputs":[{"name":"user","type":"address","internalType":"address"}],"outputs":[{"name":"","type":"tuple[]","internalType":"struct SpinBrigade.SpinResult[]","components":[{"name":"recipeId","type":"uint256","internalType":"uint256"},{"name":"timestamp","type":"uint256","internalType":"uint256"},{"name":"user","type":"address","internalType":"address"},{"name":"spinType","type":"uint8","internalType":"uint8"}]}],"stateMutability":"view"},
+  {"type":"function","name":"getUserStats","inputs":[{"name":"user","type":"address","internalType":"address"}],"outputs":[{"name":"_totalSpins","type":"uint256","internalType":"uint256"},{"name":"_premiumSpins","type":"uint256","internalType":"uint256"},{"name":"_level","type":"uint256","internalType":"uint256"},{"name":"_canFreeSpin","type":"bool","internalType":"bool"},{"name":"_cooldownRemaining","type":"uint256","internalType":"uint256"},{"name":"_favoriteRecipes","type":"uint256[]","internalType":"uint256[]"}],"stateMutability":"view"},
+  {"type":"function","name":"globalTotalRevenue","inputs":[],"outputs":[{"name":"","type":"uint256","internalType":"uint256"}],"stateMutability":"view"},
+  {"type":"function","name":"globalTotalSpins","inputs":[],"outputs":[{"name":"","type":"uint256","internalType":"uint256"}],"stateMutability":"view"},
+  {"type":"function","name":"globalTotalUsers","inputs":[],"outputs":[{"name":"","type":"uint256","internalType":"uint256"}],"stateMutability":"view"},
+  {"type":"function","name":"lastFreeSpinDay","inputs":[{"name":"","type":"address","internalType":"address"}],"outputs":[{"name":"","type":"uint256","internalType":"uint256"}],"stateMutability":"view"},
+  {"type":"function","name":"lastSpinTime","inputs":[{"name":"","type":"address","internalType":"address"}],"outputs":[{"name":"","type":"uint256","internalType":"uint256"}],"stateMutability":"view"},
+  {"type":"function","name":"owner","inputs":[],"outputs":[{"name":"","type":"address","internalType":"address"}],"stateMutability":"view"},
+  {"type":"function","name":"premiumSpin","inputs":[],"outputs":[],"stateMutability":"payable"},
+  {"type":"function","name":"premiumSpins","inputs":[{"name":"","type":"address","internalType":"address"}],"outputs":[{"name":"","type":"uint256","internalType":"uint256"}],"stateMutability":"view"},
+  {"type":"function","name":"recipeNames","inputs":[{"name":"","type":"uint256","internalType":"uint256"}],"outputs":[{"name":"","type":"string","internalType":"string"}],"stateMutability":"view"},
+  {"type":"function","name":"standardSpin","inputs":[],"outputs":[],"stateMutability":"payable"},
+  {"type":"function","name":"totalSpins","inputs":[{"name":"","type":"address","internalType":"address"}],"outputs":[{"name":"","type":"uint256","internalType":"uint256"}],"stateMutability":"view"},
+  {"type":"function","name":"userSpins","inputs":[{"name":"","type":"address","internalType":"address"},{"name":"","type":"uint256","internalType":"uint256"}],"outputs":[{"name":"recipeId","type":"uint256","internalType":"uint256"},{"name":"timestamp","type":"uint256","internalType":"uint256"},{"name":"user","type":"address","internalType":"address"},{"name":"spinType","type":"uint8","internalType":"uint8"}],"stateMutability":"view"},
+  {"type":"function","name":"withdraw","inputs":[],"outputs":[],"stateMutability":"nonpayable"},
+  {"type":"event","name":"RecipeSpun","inputs":[{"name":"user","type":"address","indexed":true,"internalType":"address"},{"name":"recipeId","type":"uint256","indexed":false,"internalType":"uint256"},{"name":"recipeName","type":"string","indexed":false,"internalType":"string"},{"name":"spinType","type":"uint8","indexed":false,"internalType":"uint8"},{"name":"timestamp","type":"uint256","indexed":false,"internalType":"uint256"}],"anonymous":false}
+] as const
+
+// Configuration AppKit
+const projectId = '8e4b1bfd9a610fec9db0a70d7bbbd67e' // TODO: Ajouter ton Project ID Reown
+
+const networks = [monadTestnet]
+const metadata = {
+  name: 'Spin Brigade',
+  description: 'Join the culinary revolution on Monad!',
+  url: 'https://spin-brigade.xyz',
+  icons: ['/logo.png']
+}
+
+const ethersAdapter = new EthersAdapter()
+
+export const appKit = createAppKit({
+  adapters: [ethersAdapter],
+  networks,
+  metadata,
+  projectId,
+  features: {
+    analytics: true,
+    email: true,
+    socials: ['google', 'x', 'github', 'discord'],
+  }
+})

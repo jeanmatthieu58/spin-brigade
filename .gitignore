@@ -1,0 +1,32 @@
+# Environment variables (NEVER commit these!)
+.env
+.env.local
+.env.production
+
+# Dependencies
+node_modules/
+*/node_modules/
+
+# Build outputs
+.next/
+out/
+dist/
+build/
+
+# Foundry
+cache/
+out/
+broadcast/
+artifacts/
+
+# System files
+.DS_Store
+*.log
+
+# IDE
+.vscode/
+.idea/
+
+# Other
+*.tgz
+*.tar.gz

@@ -1,0 +1,245 @@
+'use client'
+
+import { useState } from 'react'
+
+const RECIPES = [
+  { id: 1, name: "Spaghetti Carbonara", emoji: "🍝" },
+  { id: 2, name: "Chocolate Chip Cookies", emoji: "🍪" },
+  { id: 3, name: "Beef Tacos", emoji: "🌮" },
+  { id: 4, name: "Caesar Salad", emoji: "🥗" },
+  { id: 5, name: "Margherita Pizza", emoji: "🍕" },
+  { id: 6, name: "Chicken Curry", emoji: "🍛" },
+  { id: 7, name: "Apple Pie", emoji: "🥧" },
+  { id: 8, name: "Fish & Chips", emoji: "🍟" },
+]
+
+export default function Home() {
+  const [spinning, setSpinning] = useState(false)
+  const [rotation, setRotation] = useState(0)
+  const [selectedRecipe, setSelectedRecipe] = useState(null)
+  const [showResult, setShowResult] = useState(false)
+  const [totalSpins, setTotalSpins] = useState(0)
+  const [isConnected, setIsConnected] = useState(false)
+
+  const handleSpin = (type) => {
+    if (spinning) return
+
+    if (type === 'premium' && !isConnected) {
+      alert('Connect wallet first!')
+      return
+    }
+
+    setSpinning(true)
+    setShowResult(false)
+    
+    const spins = 5 + Math.random() * 5
+    const finalAngle = Math.random() * 360
+    const newRotation = rotation + (spins * 360) + finalAngle
+    setRotation(newRotation)
+    
+    setTimeout(() => {
+      const randomRecipe = RECIPES[Math.floor(Math.random() * RECIPES.length)]
+      setSelectedRecipe(randomRecipe)
+      setShowResult(true)
+      setSpinning(false)
+      setTotalSpins(prev => prev + 1)
+    }, 3000)
+  }
+
+  const handleConnect = () => {
+    setIsConnected(!isConnected)
+    if (!isConnected) {
+      alert('Wallet Connected! (Simulated)')
+    }
+  }
+
+  const containerStyle = {
+    minHeight: '100vh',
+    background: 'linear-gradient(135deg, #fff7ed, #fce7e7)',
+    padding: '2rem'
+  }
+
+  const headerStyle = {
+    textAlign: 'center',
+    marginBottom: '3rem'
+  }
+
+  const titleStyle = {
+    fontSize: '4rem',
+    fontWeight: '900',
+    color: '#1f2937',
+    marginBottom: '1rem'
+  }
+
+  const rouletteStyle = {
+    width: '300px',
+    height: '300px',
+    background: 'linear-gradient(45deg, #fb923c, #ef4444, #ec4899)',
+    borderRadius: '50%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    boxShadow: '0 25px 50px rgba(251, 146, 60, 0.4)',
+    border: '8px solid white',
+    transform: `rotate(${rotation}deg)`,
+    transition: spinning ? 'transform 3s cubic-bezier(0.25, 0.1, 0.25, 1)' : 'none',
+    position: 'relative',
+    margin: '0 auto'
+  }
+
+  const centerStyle = {
+    width: '80px',
+    height: '80px',
+    background: 'white',
+    borderRadius: '50%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontSize: '2.5rem'
+  }
+
+  const buttonStyle = {
+    color: 'white',
+    border: 'none',
+    padding: '1rem 2rem',
+    borderRadius: '2rem',
+    fontSize: '1.1rem',
+    fontWeight: 'bold',
+    cursor: 'pointer',
+    margin: '0.5rem',
+    width: '300px'
+  }
+
+  return (
+    <div style={containerStyle}>
+      <div style={headerStyle}>
+        <h1 style={titleStyle}>⚡ Spin Brigade</h1>
+        <p style={{ color: '#6b7280', fontSize: '1.3rem' }}>
+          Join the culinary revolution on Monad!
+        </p>
+      </div>
+
+      <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+        <div style={rouletteStyle}>
+          <div style={centerStyle}>🍳</div>
+        </div>
+      </div>
+
+      {spinning && (
+        <div style={{
+          textAlign: 'center',
+          background: 'rgba(59, 130, 246, 0.1)',
+          color: '#1e40af',
+          padding: '1rem',
+          borderRadius: '1rem',
+          margin: '2rem auto',
+          maxWidth: '400px'
+        }}>
+          🎲 Spinning the wheel of culinary destiny...
+        </div>
+      )}
+
+      <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+        <button
+          onClick={() => handleSpin('free')}
+          disabled={spinning}
+          style={{
+            ...buttonStyle,
+            background: 'linear-gradient(90deg, #10b981, #059669)',
+            opacity: spinning ? 0.7 : 1
+          }}
+        >
+          🎁 FREE Daily Spin!
+        </button>
+        
+        <button
+          onClick={() => handleSpin('standard')}
+          disabled={spinning}
+          style={{
+            ...buttonStyle,
+            background: 'linear-gradient(90deg, #9333ea, #ec4899)',
+            opacity: spinning ? 0.7 : 1
+          }}
+        >
+          🎰 Spin Recipe! (0.001 MON)
+        </button>
+        
+        <button
+          onClick={() => handleSpin('premium')}
+          disabled={spinning || !isConnected}
+          style={{
+            ...buttonStyle,
+            background: isConnected ? 'linear-gradient(90deg, #eab308, #f97316)' : 'gray',
+            opacity: (spinning || !isConnected) ? 0.7 : 1
+          }}
+        >
+          ⭐ Premium Spin! (0.01 MON) {!isConnected && '🔒'}
+        </button>
+      </div>
+
+      <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+        <button
+          onClick={handleConnect}
+          style={{
+            ...buttonStyle,
+            background: isConnected ? '#ef4444' : 'linear-gradient(90deg, #2563eb, #4f46e5)'
+          }}
+        >
+          {isConnected ? 'Disconnect Wallet' : 'Connect Wallet (Simulated)'}
+        </button>
+      </div>
+
+      <div style={{ textAlign: 'center' }}>
+        <div style={{
+          background: 'rgba(255, 255, 255, 0.8)',
+          borderRadius: '1rem',
+          padding: '1rem',
+          display: 'inline-block',
+          margin: '1rem'
+        }}>
+          <h3>📊 Your Stats</h3>
+          <p>Total Spins: {totalSpins}</p>
+          <p>Status: {isConnected ? '✅ Connected' : '🔒 Not Connected'}</p>
+        </div>
+      </div>
+
+      {showResult && selectedRecipe && (
+        <div style={{
+          position: 'fixed',
+          top: '0',
+          left: '0',
+          width: '100%',
+          height: '100%',
+          background: 'rgba(0,0,0,0.6)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000
+        }} onClick={() => setShowResult(false)}>
+          <div style={{
+            background: 'white',
+            borderRadius: '2rem',
+            padding: '2rem',
+            textAlign: 'center',
+            maxWidth: '400px'
+          }} onClick={(e) => e.stopPropagation()}>
+            <div style={{ fontSize: '4rem' }}>🎉</div>
+            <h2>Recipe Discovered!</h2>
+            <div style={{ fontSize: '3rem' }}>{selectedRecipe.emoji}</div>
+            <h3 style={{ color: '#f97316' }}>{selectedRecipe.name}</h3>
+            <button
+              onClick={() => setShowResult(false)}
+              style={{
+                ...buttonStyle,
+                background: '#6b7280',
+                width: 'auto'
+              }}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
